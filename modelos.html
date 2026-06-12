@@ -2,39 +2,91 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sisfrota — Modelos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <title>Sifrota - Modelos</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="bg-light">
-    <nav class="navbar navbar-dark bg-dark mb-4">
-        <div class="container"><a class="navbar-brand" href="index.html">Sifrota Web</a></div>
-    </nav>
+<body>
 
-    <div class="container">
-        <div class="d-flex justify-content-between mb-4">
-            <h2>🚘 Gestão de Modelos</h2>
-            <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalModelo">Novo Modelo</button>
-        </div>
-        <table class="table table-striped shadow-sm bg-white">
-            <thead><tr><th>ID</th><th>Nome</th><th>Ações</th></tr></thead>
-            <tbody id="tabelaCorpo"></tbody>
-        </table>
-    </div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
 
-    <div class="modal fade" id="modalModelo" tabindex="-1">
-        <div class="modal-dialog">
-            <form id="formModelo" class="modal-content">
-                <div class="modal-header"><h5 id="modalTitulo">Novo Modelo</h5></div>
-                <div class="modal-body">
-                    <input type="hidden" id="idField">
-                    <input type="text" id="nomeField" class="form-control" placeholder="Nome do Modelo" required>
-                </div>
-                <div class="modal-footer"><button type="submit" class="btn btn-primary w-100">Salvar no Xano</button></div>
-            </form>
+<nav class="navbar navbar-glass navbar-expand-lg px-3">
+    <div class="container-lg">
+        <a class="navbar-brand" href="index.html">⬡ Sisfrota</a>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav" style="filter:invert(1)">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="nav">
+            <ul class="navbar-nav ms-auto gap-1">
+                <li class="nav-item"><a class="nav-link" href="marcas.html">Marcas</a></li>
+                <li class="nav-item"><a class="nav-link active" href="modelos.html">Modelos</a></li>
+                <li class="nav-item"><a class="nav-link" href="veiculos.html">Veículos</a></li>
+            </ul>
         </div>
     </div>
+</nav>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script type="module" src="js/controllers/modeloController.js"></script>
+<main>
+    <div class="container-lg">
+
+        <div class="page-header fade-up">
+            <h2>🚘 Modelos</h2>
+            <button class="btn btn-glow btn-glow-green" id="btnNovo">+ Novo Modelo</button>
+        </div>
+
+        <div class="glass-table-wrap fade-up-2">
+            <table class="glass-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th style="width:140px">Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tabelaCorpo"></tbody>
+            </table>
+        </div>
+
+    </div>
+</main>
+
+<!-- Modal -->
+<div class="modal fade" id="modalModelo" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form id="formModelo" class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitulo">Novo Modelo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+                <input type="hidden" id="idField">
+                <label class="form-label">NOME DO MODELO</label>
+                <input type="text" id="nomeField" class="form-control" placeholder="Ex: Corolla" required>
+            </div>
+            <div class="modal-footer gap-2 px-4 pb-4">
+                <button type="button" class="btn btn-icon" data-bs-dismiss="modal" style="padding:.5rem 1rem">Cancelar</button>
+                <button type="submit" class="btn btn-glow btn-glow-green">Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="position-fixed bottom-0 end-0 p-3" id="toast-container">
+    <div id="toast" class="toast" role="alert">
+        <div class="d-flex align-items-center gap-2 p-3">
+            <span class="toast-icon" id="toastIcon"></span>
+            <span id="toastMsg" style="font-size:.88rem"></span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" style="filter:invert(1);opacity:.5"></button>
+        </div>
+    </div>
+</div>
+
+<footer>Sisfrota &copy; 2026</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module" src="js/controllers/modeloController.js"></script>
 </body>
 </html>

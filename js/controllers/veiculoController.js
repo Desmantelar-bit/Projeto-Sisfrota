@@ -1,91 +1,114 @@
 import { veiculoService } from '../services/veiculoService.js';
-import { marcaService } from '../services/marcaService.js';
-import { modeloService } from '../services/modeloService.js';
+import { marcaService }   from '../services/marcaService.js';
+import { modeloService }  from '../services/modeloService.js';
 
-const tabela = document.querySelector('#tabela'); // No HTML está id="tabela"
-const form = document.querySelector('#formVeiculo');
-const selMarca = document.querySelector('#selMarca');
+const tabela    = document.querySelector('#tabela');
+const form      = document.querySelector('#formVeiculo');
+const selMarca  = document.querySelector('#selMarca');
 const selModelo = document.querySelector('#selModelo');
-const modalBS = new bootstrap.Modal(document.getElementById('modalVeiculo'));
+const modal     = new bootstrap.Modal(document.getElementById('modalVeiculo'));
+
+let marcasCache = [], modelosCache = [];
+
+function toast(msg, ok = true) {
+    const el   = document.getElementById('toast');
+    const icon = document.getElementById('toastIcon');
+    document.getElementById('toastMsg').textContent = msg;
+    el.className = `toast ${ok ? 'success' : 'danger'}`;
+    icon.textContent = ok ? '✓' : '✕';
+    icon.style.color = ok ? 'var(--accent-green)' : '#fc8181';
+    bootstrap.Toast.getOrCreateInstance(el, { delay: 3000 }).show();
+}
+
+function emptyState(msg) {
+    return `<tr><td colspan="6"><div class="empty-state"><div class="icon">🚗</div><p>${msg}</p></div></td></tr>`;
+}
+
+function nomePor(lista, id) {
+    return lista.find(x => x.id === id)?.nome ?? '—';
+}
 
 async function carregarDropdowns() {
+    [marcasCache, modelosCache] = await Promise.all([marcaService.listar(), modeloService.listar()]);
+    selMarca.innerHTML  = '<option value="" disabled selected>Selecionar</option>' +
+        marcasCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
+    selModelo.innerHTML = '<option value="" disabled selected>Selecionar</option>' +
+        modelosCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
+}
+
+async function render() {
+    tabela.innerHTML = `<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--text-muted);font-size:.85rem">Carregando...</td></tr>`;
     try {
-        const [marcas, modelos] = await Promise.all([
-            marcaService.listar(),
-            modeloService.listar()
-        ]);
-
-        // Preenche o Select de Marcas
-        selMarca.innerHTML = '<option value="" disabled selected>Selecione uma Marca</option>' + 
-            marcas.map(m => `<option value="${m.id}">${m.nome || m.Nome}</option>`).join('');
-
-        // Preenche o Select de Modelos
-        selModelo.innerHTML = '<option value="" disabled selected>Selecione um Modelo</option>' + 
-            modelos.map(m => `<option value="${m.id}">${m.nome || m.Nome}</option>`).join('');
-    } catch (erro) {
-        console.error("Erro ao carregar dados dos seletores:", erro);
+        const lista = await veiculoService.listar();
+        if (!lista.length) { tabela.innerHTML = emptyState('Nenhum veículo cadastrado.'); return; }
+        tabela.innerHTML = lista.map(v => `
+            <tr>
+                <td>${v.descricao ?? v.Descricao ?? '—'}</td>
+                <td>${nomePor(marcasCache, v.MarcaId)}</td>
+                <td>${nomePor(modelosCache, v.ModeloId)}</td>
+                <td>${v.ano ?? v.Ano ?? '—'}</td>
+                <td>${v.horimetro ?? v.Horimetro ?? '—'}</td>
+                <td>
+                    <button class="btn-icon me-1" onclick="prepararEdicao(${v.id})">✎ Editar</button>
+                    <button class="btn-icon danger" onclick="deletar(${v.id})">✕</button>
+                </td>
+            </tr>`).join('');
+    } catch {
+        tabela.innerHTML = emptyState('Erro ao carregar veículos.');
     }
 }
 
-async function atualizarTela() {
-    tabela.innerHTML = ""; 
-    const lista = await veiculoService.listar();
+document.getElementById('btnNovo').addEventListener('click', () => {
+    form.reset();
+    document.getElementById('idV').value = '';
+    document.getElementById('modalTitulo').textContent = 'Novo Veículo';
+    modal.show();
+});
 
-    lista.forEach(v => {
-        const linha = document.createElement('tr');
-        // Tratando possíveis variações de maiúsculas/minúsculas vindas do banco
-        const descricao = v.Descricao || v.descricao || "Sem descrição";
-        const ano = v.Ano || v.ano || "-";
-        
-        linha.innerHTML = `
-            <td>${descricao}</td>
-            <td>${ano}</td>
-            <td>
-                <button class="btn btn-danger btn-sm" data-id="${v.id}">Excluir</button>
-            </td>
-        `;
-        tabela.appendChild(linha);
-    });
-}
+window.prepararEdicao = async (id) => {
+    const lista = await veiculoService.listar();
+    const v = lista.find(x => x.id === id);
+    if (!v) return;
+    document.getElementById('idV').value    = v.id;
+    document.getElementById('descV').value  = v.descricao ?? v.Descricao ?? '';
+    document.getElementById('anoV').value   = v.ano ?? v.Ano ?? '';
+    document.getElementById('horiV').value  = v.horimetro ?? v.Horimetro ?? '';
+    selMarca.value  = v.MarcaId  ?? '';
+    selModelo.value = v.ModeloId ?? '';
+    document.getElementById('modalTitulo').textContent = 'Editar Veículo';
+    modal.show();
+};
 
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
-    // IDs dos seletores ajustados exatamente como estão no seu HTML (descV, anoV, horiV, etc)
-    const id = document.querySelector('#idV').value;
-    const objetoVeiculo = {
-        Descricao: document.querySelector('#descV').value,
-        Ano: parseInt(document.querySelector('#anoV').value),
-        Horimetro: parseInt(document.querySelector('#horiV').value),
-        MarcaId: parseInt(selMarca.value),
-        ModeloId: parseInt(selModelo.value)
+    const id    = document.getElementById('idV').value;
+    const dados = {
+        Descricao: document.getElementById('descV').value,
+        Ano:       parseInt(document.getElementById('anoV').value),
+        Horimetro: parseInt(document.getElementById('horiV').value),
+        MarcaId:   parseInt(selMarca.value),
+        ModeloId:  parseInt(selModelo.value)
     };
-
-    if (id) {
-        await veiculoService.atualizar(id, objetoVeiculo);
-    } else {
-        await veiculoService.cadastrar(objetoVeiculo);
-    }
-
-    form.reset();
-    document.querySelector('#idV').value = ""; // Limpa o ID oculto
-    modalBS.hide(); // Fecha o modal após salvar
-    atualizarTela();
+    try {
+        id ? await veiculoService.atualizar(id, dados) : await veiculoService.cadastrar(dados);
+        modal.hide();
+        toast(id ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
+        render();
+    } catch { toast('Erro ao salvar veículo.', false); }
 });
 
-tabela.addEventListener('click', async (e) => {
-    if (e.target.classList.contains('btn-danger')) {
-        const id = e.target.getAttribute('data-id');
-        if (confirm("Deseja apagar este veículo?")) {
-            await veiculoService.excluir(id);
-            atualizarTela();
-        }
-    }
-});
+window.deletar = async (id) => {
+    if (!confirm('Deseja excluir este veículo?')) return;
+    try {
+        await veiculoService.excluir(id);
+        toast('Veículo excluído.');
+        render();
+    } catch { toast('Erro ao excluir.', false); }
+};
 
 async function init() {
     await carregarDropdowns();
-    await atualizarTela();
+    await render();
 }
 
 init();
