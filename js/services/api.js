@@ -25,19 +25,25 @@ export function createCachedService(url) {
     } catch {}
   }
 
-  return {
-    listar: async () => {
-      if (cache && Date.now() - cacheTime < TTL) return cache;
-      const stored = readStorage();
-      if (stored) { cache = stored; cacheTime = Date.now(); return cache; }
-      const r = await fetch(url);
-      if (!r.ok) throw new Error(`HTTP ${r.status}`);
-      const data = await r.json();
-      const arr = data.value ?? data;
-      cache = arr;
-      cacheTime = Date.now();
-      writeStorage(arr);
-      return arr;
-    },
-  };
+  async function listar() {
+    if (cache && Date.now() - cacheTime < TTL) return cache;
+    const stored = readStorage();
+    if (stored) { cache = stored; cacheTime = Date.now(); return cache; }
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    const data = await r.json();
+    const arr = data.value ?? data;
+    cache = arr;
+    cacheTime = Date.now();
+    writeStorage(arr);
+    return arr;
+  }
+
+  function invalidate() {
+    cache = null;
+    cacheTime = 0;
+    try { localStorage.removeItem(STORAGE_KEY); } catch {}
+  }
+
+  return { listar, invalidate };
 }
