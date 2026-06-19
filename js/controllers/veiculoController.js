@@ -28,6 +28,14 @@ function nomePor(lista, id) {
     return lista.find(x => x.id === id)?.nome ?? '—';
 }
 
+const CAMPOS_VIE = {
+    descricao: v => v.descricao ?? v.Descricao ?? '—',
+    ano:       v => v.ano ?? v.Ano ?? '—',
+    horimetro: v => v.horimetro ?? v.Horimetro ?? '—',
+    marcaId:   v => v.marca_Id ?? v.MarcaId ?? '',
+    modeloId:  v => v.modelo_Id ?? v.ModeloId ?? ''
+};
+
 async function carregarDropdowns() {
     const [marcas, modelos] = await Promise.all([
         marcaService.listar(),
@@ -52,11 +60,11 @@ async function render() {
         if (!lista.length) { tabela.innerHTML = emptyState('Nenhum veículo cadastrado.'); return; }
         tabela.innerHTML = lista.map(v => `
             <tr>
-                <td>${v.descricao ?? v.Descricao ?? '—'}</td>
-                <td>${nomePor(marcasCache, v.MarcaId)}</td>
-                <td>${nomePor(modelosCache, v.ModeloId)}</td>
-                <td>${v.ano ?? v.Ano ?? '—'}</td>
-                <td>${v.horimetro ?? v.Horimetro ?? '—'}</td>
+                <td>${CAMPOS_VIE.descricao(v)}</td>
+                <td>${nomePor(marcasCache, CAMPOS_VIE.marcaId(v))}</td>
+                <td>${nomePor(modelosCache, CAMPOS_VIE.modeloId(v))}</td>
+                <td>${CAMPOS_VIE.ano(v)}</td>
+                <td>${CAMPOS_VIE.horimetro(v)}</td>
                 <td>
                     <button class="btn-icon me-1" onclick="prepararEdicao(${v.id})">✎ Editar</button>
                     <button class="btn-icon danger" onclick="deletar(${v.id})">✕</button>
@@ -79,11 +87,11 @@ window.prepararEdicao = async (id) => {
     const v = lista.find(x => x.id === id);
     if (!v) return;
     document.getElementById('idV').value    = v.id;
-    document.getElementById('descV').value  = v.descricao ?? v.Descricao ?? '';
-    document.getElementById('anoV').value   = v.ano ?? v.Ano ?? '';
-    document.getElementById('horiV').value  = v.horimetro ?? v.Horimetro ?? '';
-    selMarca.value  = v.MarcaId  ?? '';
-    selModelo.value = v.ModeloId ?? '';
+    document.getElementById('descV').value  = CAMPOS_VIE.descricao(v);
+    document.getElementById('anoV').value   = CAMPOS_VIE.ano(v);
+    document.getElementById('horiV').value  = CAMPOS_VIE.horimetro(v);
+    selMarca.value  = CAMPOS_VIE.marcaId(v) ?? '';
+    selModelo.value = CAMPOS_VIE.modeloId(v) ?? '';
     document.getElementById('modalTitulo').textContent = 'Editar Veículo';
     modal.show();
 };
@@ -92,11 +100,11 @@ form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const id    = document.getElementById('idV').value;
     const dados = {
-        Descricao: document.getElementById('descV').value,
-        Ano:       parseInt(document.getElementById('anoV').value),
-        Horimetro: parseInt(document.getElementById('horiV').value),
-        MarcaId:   parseInt(selMarca.value),
-        ModeloId:  parseInt(selModelo.value)
+        descricao: document.getElementById('descV').value,
+        ano:       parseInt(document.getElementById('anoV').value),
+        horimetro: parseInt(document.getElementById('horiV').value),
+        marca_Id:  parseInt(selMarca.value),
+        modelo_Id: parseInt(selModelo.value)
     };
     try {
         id ? await veiculoService.atualizar(id, dados) : await veiculoService.cadastrar(dados);
