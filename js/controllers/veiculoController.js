@@ -29,12 +29,22 @@ function nomePor(lista, id) {
 }
 
 async function carregarDropdowns() {
-    [marcasCache, modelosCache] = await Promise.all([marcaService.listar(), modeloService.listar()]);
+    try {
+        [marcasCache, modelosCache] = await Promise.all([
+            marcaService.listar().catch(() => []),
+            modeloService.listar().catch(() => [])
+        ]);
+    } catch {
+        marcasCache = [];
+        modelosCache = [];
+    }
+
     selMarca.innerHTML  = '<option value="" disabled selected>Selecionar</option>' +
         marcasCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
     selModelo.innerHTML = '<option value="" disabled selected>Selecionar</option>' +
         modelosCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
 }
+
 
 async function render() {
     tabela.innerHTML = `<tr><td colspan="6" style="padding:2rem;text-align:center;color:var(--text-muted);font-size:.85rem">Carregando...</td></tr>`;
