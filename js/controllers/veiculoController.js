@@ -29,21 +29,20 @@ function nomePor(lista, id) {
 }
 
 async function carregarDropdowns() {
-    try {
-        [marcasCache, modelosCache] = await Promise.all([
-            marcaService.listar().catch(() => []),
-            modeloService.listar().catch(() => [])
-        ]);
-    } catch {
-        marcasCache = [];
-        modelosCache = [];
-    }
+    const [marcas, modelos] = await Promise.all([
+        marcaService.listar(),
+        modeloService.listar()
+    ]);
+
+    marcasCache = Array.isArray(marcas) ? marcas : [];
+    modelosCache = Array.isArray(modelos) ? modelos : [];
 
     selMarca.innerHTML  = '<option value="" disabled selected>Selecionar</option>' +
         marcasCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
     selModelo.innerHTML = '<option value="" disabled selected>Selecionar</option>' +
         modelosCache.map(m => `<option value="${m.id}">${m.nome}</option>`).join('');
 }
+
 
 
 async function render() {
