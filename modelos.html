@@ -12,45 +12,83 @@
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
 
-<nav class="navbar navbar-glass navbar-expand-lg px-3">
-    <div class="container-lg">
-        <a class="navbar-brand" href="index.html">⬡ Sisfrota</a>
-        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#nav" style="filter:invert(1)">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="nav">
-            <ul class="navbar-nav ms-auto gap-1">
-                <li class="nav-item"><a class="nav-link" href="marcas.html">Marcas</a></li>
-                <li class="nav-item"><a class="nav-link active" href="modelos.html">Modelos</a></li>
-                <li class="nav-item"><a class="nav-link" href="veiculos.html">Veículos</a></li>
-            </ul>
+<div class="app">
+
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <div class="sidebar-logo-icon">🚛</div>
+            <div class="sidebar-logo-text">
+                <strong>Sisfrota</strong>
+                <span>Gestão de Frotas</span>
+            </div>
+        </a>
+
+        <div class="sidebar-section-label">Menu</div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link">
+                <div class="sidebar-link-icon">⊞</div> Dashboard
+            </a>
+            <a href="marcas.html" class="sidebar-link">
+                <div class="sidebar-link-icon">🏢</div> Marcas
+            </a>
+            <a href="modelos.html" class="sidebar-link active">
+                <div class="sidebar-link-icon">🚘</div> Modelos
+            </a>
+            <a href="veiculos.html" class="sidebar-link">
+                <div class="sidebar-link-icon">🚚</div> Veículos
+            </a>
+        </nav>
+
+        <div class="sidebar-stats">
+            <div class="sidebar-section-label" style="margin-bottom:.4rem">Resumo</div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Marcas</span>
+                <span class="sidebar-stat-value" id="sMarcas">—</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Modelos</span>
+                <span class="sidebar-stat-value" id="sModelos">—</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Veículos</span>
+                <span class="sidebar-stat-value" id="sVeiculos">—</span>
+            </div>
         </div>
+
+        <div class="sidebar-version">v1.0.0 &nbsp;·&nbsp; Sisfrota &copy; 2026</div>
+    </aside>
+
+    <!-- ── CONTEÚDO ── -->
+    <div class="content">
+        <div class="content-body">
+
+            <div class="page-header fade-up">
+                <h1>🚘 Modelos</h1>
+                <button class="btn btn-glow btn-glow-green" id="btnNovo">+ Novo Modelo</button>
+            </div>
+
+            <div class="glass-table-wrap fade-up-2">
+                <table class="glass-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th style="width:150px">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaCorpo"></tbody>
+                </table>
+            </div>
+
+        </div>
+        <footer>
+            <span>Sisfrota &copy; 2026</span>
+            <span>SENAI · Desenvolvimento Web</span>
+        </footer>
     </div>
-</nav>
 
-<main>
-    <div class="container-lg">
-
-        <div class="page-header fade-up">
-            <h2>🚘 Modelos</h2>
-            <button class="btn btn-glow btn-glow-green" id="btnNovo">+ Novo Modelo</button>
-        </div>
-
-        <div class="glass-table-wrap fade-up-2">
-            <table class="glass-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th style="width:140px">Ações</th>
-                    </tr>
-                </thead>
-                <tbody id="tabelaCorpo"></tbody>
-            </table>
-        </div>
-
-    </div>
-</main>
+</div>
 
 <!-- Modal -->
 <div class="modal fade" id="modalModelo" tabindex="-1">
@@ -62,7 +100,7 @@
             </div>
             <div class="modal-body p-4">
                 <input type="hidden" id="idField">
-                <label class="form-label">NOME DO MODELO</label>
+                <label class="form-label">Nome do Modelo</label>
                 <input type="text" id="nomeField" class="form-control" placeholder="Ex: Corolla" required>
             </div>
             <div class="modal-footer gap-2 px-4 pb-4">
@@ -77,16 +115,25 @@
 <div class="position-fixed bottom-0 end-0 p-3" id="toast-container">
     <div id="toast" class="toast" role="alert">
         <div class="d-flex align-items-center gap-2 p-3">
-            <span class="toast-icon" id="toastIcon"></span>
-            <span id="toastMsg" style="font-size:.88rem"></span>
-            <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" style="filter:invert(1);opacity:.5"></button>
+            <span id="toastIcon"></span>
+            <span id="toastMsg" style="font-size:.85rem"></span>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="toast" style="filter:invert(1);opacity:.4"></button>
         </div>
     </div>
 </div>
 
-<footer>Sisfrota &copy; 2026</footer>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script type="module" src="js/controllers/modeloController.js"></script>
+<script type="module">
+import { marcaService }   from './js/services/marcaService.js';
+import { modeloService }  from './js/services/modeloService.js';
+import { veiculoService } from './js/services/veiculoService.js';
+Promise.all([marcaService.listar(), modeloService.listar(), veiculoService.listar()])
+    .then(([m, mo, v]) => {
+        document.getElementById('sMarcas').textContent   = m.length;
+        document.getElementById('sModelos').textContent  = mo.length;
+        document.getElementById('sVeiculos').textContent = v.length;
+    }).catch(() => {});
+</script>
 </body>
 </html>

@@ -3,84 +3,148 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sisfrota — Controle de Frota</title>
+    <title>Sisfrota — Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
-<!-- Orbs de fundo -->
 <div class="orb orb-1"></div>
 <div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
 
-<section class="hero-section">
-    <div class="hero-glass fade-up">
+<div class="app">
 
-        <div class="hero-logo">🚛</div>
-
-        <h1 class="hero-title">Sisfrota</h1>
-        <p class="hero-sub">Plataforma de gestão inteligente de frotas</p>
-
-        <!-- Stats -->
-        <div class="stats-row fade-up-2">
-            <div class="stat-chip">
-                <div class="num" id="statMarcas">—</div>
-                <div class="lbl">Marcas</div>
+    <!-- ── SIDEBAR ── -->
+    <aside class="sidebar">
+        <a href="index.html" class="sidebar-logo">
+            <div class="sidebar-logo-icon">🚛</div>
+            <div class="sidebar-logo-text">
+                <strong>Sisfrota</strong>
+                <span>Gestão de Frotas</span>
             </div>
-            <div class="stat-chip">
-                <div class="num" id="statModelos">—</div>
-                <div class="lbl">Modelos</div>
+        </a>
+
+        <div class="sidebar-section-label">Menu</div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="sidebar-link active">
+                <div class="sidebar-link-icon">⊞</div> Dashboard
+            </a>
+            <a href="marcas.html" class="sidebar-link">
+                <div class="sidebar-link-icon">🏢</div> Marcas
+            </a>
+            <a href="modelos.html" class="sidebar-link">
+                <div class="sidebar-link-icon">🚘</div> Modelos
+            </a>
+            <a href="veiculos.html" class="sidebar-link">
+                <div class="sidebar-link-icon">🚚</div> Veículos
+            </a>
+        </nav>
+
+        <div class="sidebar-stats">
+            <div class="sidebar-section-label" style="margin-bottom:.4rem">Resumo</div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Marcas</span>
+                <span class="sidebar-stat-value" id="sMarcas">—</span>
             </div>
-            <div class="stat-chip">
-                <div class="num" id="statVeiculos">—</div>
-                <div class="lbl">Veículos</div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Modelos</span>
+                <span class="sidebar-stat-value" id="sModelos">—</span>
+            </div>
+            <div class="sidebar-stat">
+                <span class="sidebar-stat-label">Veículos</span>
+                <span class="sidebar-stat-value" id="sVeiculos">—</span>
             </div>
         </div>
 
-        <!-- Nav cards -->
-        <div class="d-flex flex-column gap-3 fade-up-3">
-            <a href="marcas.html" class="nav-card">
-                <div class="nav-card-icon" style="background:rgba(99,179,237,0.15);">🏢</div>
-                <div class="nav-card-text">
-                    <strong>Marcas</strong>
-                    <span>Gerencie fabricantes e fornecedores</span>
+        <div class="sidebar-version">v1.0.0 &nbsp;·&nbsp; Sisfrota &copy; 2026</div>
+    </aside>
+
+    <!-- ── CONTEÚDO ── -->
+    <div class="content">
+        <div class="content-body">
+
+            <!-- Boas-vindas -->
+            <div class="dashboard-welcome fade-up">
+                <h1>Bem-vindo ao Sisfrota 👋</h1>
+                <p>Plataforma de gestão inteligente da sua frota de veículos.</p>
+            </div>
+
+            <!-- KPIs -->
+            <div class="kpi-grid fade-up-2">
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background:rgba(99,179,237,0.12)">🏢</div>
+                    <div class="kpi-info">
+                        <div class="val" id="kMarcas">—</div>
+                        <div class="lbl">Marcas cadastradas</div>
+                    </div>
                 </div>
-                <span class="nav-card-arrow">›</span>
-            </a>
-            <a href="modelos.html" class="nav-card">
-                <div class="nav-card-icon" style="background:rgba(104,211,145,0.15);">🚘</div>
-                <div class="nav-card-text">
-                    <strong>Modelos</strong>
-                    <span>Catálogo de modelos disponíveis</span>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background:rgba(104,211,145,0.12)">🚘</div>
+                    <div class="kpi-info">
+                        <div class="val" id="kModelos">—</div>
+                        <div class="lbl">Modelos cadastrados</div>
+                    </div>
                 </div>
-                <span class="nav-card-arrow">›</span>
-            </a>
-            <a href="veiculos.html" class="nav-card">
-                <div class="nav-card-icon" style="background:rgba(246,224,94,0.15);">🚚</div>
-                <div class="nav-card-text">
-                    <strong>Veículos</strong>
-                    <span>Controle completo da sua frota</span>
+                <div class="kpi-card">
+                    <div class="kpi-icon" style="background:rgba(246,224,94,0.12)">🚚</div>
+                    <div class="kpi-info">
+                        <div class="val" id="kVeiculos">—</div>
+                        <div class="lbl">Veículos na frota</div>
+                    </div>
                 </div>
-                <span class="nav-card-arrow">›</span>
-            </a>
+            </div>
+
+            <!-- Ações rápidas -->
+            <div class="quick-actions fade-up-3">
+                <h2>Acesso rápido</h2>
+                <div class="qa-grid">
+                    <a href="marcas.html" class="qa-card">
+                        <div class="qa-card-icon">🏢</div>
+                        <strong>Gerenciar Marcas</strong>
+                        <span>Cadastre e edite fabricantes</span>
+                    </a>
+                    <a href="modelos.html" class="qa-card">
+                        <div class="qa-card-icon">🚘</div>
+                        <strong>Gerenciar Modelos</strong>
+                        <span>Catálogo de modelos de veículos</span>
+                    </a>
+                    <a href="veiculos.html" class="qa-card">
+                        <div class="qa-card-icon">🚚</div>
+                        <strong>Gerenciar Veículos</strong>
+                        <span>Controle completo da frota</span>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Sobre o projeto -->
+            <div class="about-card fade-up-4">
+                <strong>Sobre o Sisfrota</strong><br>
+                Sistema web desenvolvido para controle e gestão de frotas de veículos. Permite o cadastro de
+                <strong>marcas</strong>, <strong>modelos</strong> e <strong>veículos</strong>, com rastreamento de
+                horímetro e ano de fabricação. Dados persistidos via API <strong>Xano</strong> com arquitetura
+                separada em serviços e controllers. Projeto desenvolvido no <strong>SENAI</strong>.
+            </div>
+
         </div>
 
+        <footer>
+            <span>Sisfrota &copy; 2026 — Todos os direitos reservados</span>
+            <span>SENAI · Desenvolvimento Web</span>
+        </footer>
     </div>
-</section>
 
-<footer>Sisfrota &copy; 2026 — Todos os direitos reservados</footer>
+</div>
 
 <script type="module">
-import { marcaService }  from './js/services/marcaService.js';
-import { modeloService } from './js/services/modeloService.js';
+import { marcaService }   from './js/services/marcaService.js';
+import { modeloService }  from './js/services/modeloService.js';
 import { veiculoService } from './js/services/veiculoService.js';
 
 Promise.all([marcaService.listar(), modeloService.listar(), veiculoService.listar()])
     .then(([m, mo, v]) => {
-        document.getElementById('statMarcas').textContent  = m.length;
-        document.getElementById('statModelos').textContent = mo.length;
-        document.getElementById('statVeiculos').textContent = v.length;
+        ['kMarcas','sMarcas'].forEach(id => document.getElementById(id).textContent = m.length);
+        ['kModelos','sModelos'].forEach(id => document.getElementById(id).textContent = mo.length);
+        ['kVeiculos','sVeiculos'].forEach(id => document.getElementById(id).textContent = v.length);
     }).catch(() => {});
 </script>
 </body>

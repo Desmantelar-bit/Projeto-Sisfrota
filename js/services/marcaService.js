@@ -4,8 +4,27 @@ const URL = `${BASE_URL}/marca`;
 const h = { 'Content-Type': 'application/json' };
 
 export const marcaService = {
-    listar: () => fetch(URL).then(r => r.json()),
-    cadastrar: (d) => fetch(URL, { method: 'POST', headers: h, body: JSON.stringify(d) }),
-    atualizar: (id, d) => fetch(`${URL}/${id}`, { method: 'PATCH', headers: h, body: JSON.stringify(d) }),
-    excluir: (id) => fetch(`${URL}/${id}`, { method: 'DELETE' })
+listar: async () => {
+    const r = await fetch(URL);
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+},
+
+cadastrar: async (d) => {
+    const r = await fetch(URL, { method: 'POST', headers: h, body: JSON.stringify(d) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json().catch(() => null);
+},
+
+atualizar: async (id, d) => {
+    const r = await fetch(`${URL}/${id}`, { method: 'PATCH', headers: h, body: JSON.stringify(d) });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json().catch(() => null);
+},
+
+excluir: async (id) => {
+    const r = await fetch(`${URL}/${id}`, { method: 'DELETE' });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json().catch(() => null);
+}
 };
